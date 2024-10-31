@@ -26,7 +26,11 @@ def induongdi(O):
     print(f' -> {O.name}', end = '')
 
 # Thuật toán BFS
+<<<<<<< HEAD
 def BreadthFirstSearch(S = Node('A'), GG = Node('O')):
+=======
+def BestFirstSearch(S = Node('A'), GG = Node('O')):
+>>>>>>> 58076f0efc6a8f3908ad846ec5781b3993d9f9b9
     Open = []
     Closed = []
     #B1: Cho đỉnh xuất phát vào Open
@@ -54,4 +58,8 @@ def BreadthFirstSearch(S = Node('A'), GG = Node('O')):
             if tam.name not in [x.name for x in Open] and tam.name not in [x.name for x in Closed]:
                 Open.append(tam)
 
+<<<<<<< HEAD
 BreadthFirstSearch()
+=======
+BestFirstSearch()
+>>>>>>> 58076f0efc6a8f3908ad846ec5781b3993d9f9b9
