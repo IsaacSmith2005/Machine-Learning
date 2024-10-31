@@ -1,102 +1,57 @@
-from collections import defaultdict
-from queue import PriorityQueue
+#Thuật toán tìm kiếm theo chiều rộng (BFS)
 
-# Tạo code Best First Search
+#Khai báo class
 class Node:
-    def __init__(self, name, par=None, h=0):
+    def __init__(self, name, par = None):
         self.name = name
         self.par = par
-        self.h = h
-    
-    def display(self):
-        print(self.name, self.h)    
         
-    def __lt__(self, other):
-        if other is None:
-            return False
-        return self.h < other.h
-    
-    def __eq__(self, other):
-        if other is None:
-            return False
-        return self.name == other.name
-
+#Biểu diễn cây
+from collections import defaultdict
 data = defaultdict(list)
+data['A'] = ['B', 'C', 'D']
+data['B'] = ['E', 'F']
+data['C'] = ['G', 'H']
+data['D'] = ['I', 'J']
+data['F'] = ['K', 'L', 'H']
+data['H'] = ['N', 'O']
 
-data = defaultdict(list)
-data['A'] = [('D', 3), ('B', 5)]    
-data['B'] = [('C', 1)]
-data['C'] = [('E', 6), ('G', 8)]
-data['D'] = [('E', 2), ('F', 2)]
-data['E'] = [('B', 4)]
-data['F'] = [('G', 3)]
-data['G'] = [('E', 4)]
+#In đư��ng đi
 
-def best_first_search(S=Node(name='A'), G=Node(name='G')):
-    Open = PriorityQueue()
-    Closed = PriorityQueue()
-    S.h = data[S.name][-1]
-    Open.put(S)
+def induongdi(O):
+    if O.par is None:
+        print(O.name, end = '')
+        return
+    induongdi(O.par)
+    print(f' -> {O.name}', end = '')
+
+# Thuật toán BFS
+def BestFirstSearch(S = Node('A'), GG = Node('O')):
+    Open = []
+    Closed = []
+    #B1: Cho đỉnh xuất phát vào Open
+    Open.append(S)
     while True:
-        if Open.empty():
-            print('Không tìm thấy đích.')
-            return
-        O = Open.get()
-        Closed.put(O)
-        print('Duyệt: ', O.name, O.h)
-        if equal(O, G):
-            print('Đã tìm thấy đích')
-            distance = 0
-            getPath(O, distance)
-            return
-        
-        # Check children of O
-        i = 0
-        while i < len(data[O.name]) - 1:
-            name = data[O.name][i]
-            h = data[name][-1]
-            tmp = Node(name=name, h=h)
-            tmp.par = O  # Set parent node
-            
-            oK1 = checkInPriority(tmp, Open)
-            oK2 = checkInPriority(tmp, Closed)
-            
-            if not oK1 and not oK2:
-                Open.put(tmp)
-            i += 1
-
-def equal(O, G):
-    if O.name == G.name:
-        return True
-    return False
-
-def checkInPriority(node, queue):
-    tmp_list = []
-    found = False
-    while not queue.empty():    
-        tmp = queue.get()
-        tmp_list.append(tmp)
-        if tmp.name == node.name:
-            found = True
+        #B2: Nếu Open rỗng thì tìm kiếm thất bại, kết thúc chương trinh
+        if len(Open) == 0:
+            print('Không tìm thấy đích')
             break
-    
-    # Reinsert items back into queue after checking
-    for item in tmp_list:
-        queue.put(item)
-    
-    return found
+        #B3: Lấy đỉnh đầu trong Open ra và gọi đó là O, cho O và closed
+        O = Open.pop(0)
+        Closed.append(O)
+        print(f'Duyệt: {O.name}')
+        #B4: Nếu O là đỉnh đích thì tìm kiếm thành công, kết thúc chương trình
+        if O.name == GG.name:
+            print('Đã tìm thấy đích.')
+            print('Đường đi: ', end='')
+            #in đườnng đi
+            induongdi(O)
+            break
+        #B5: Tìm tất cả đỉnh con của O
+        for i in data[O.name]:
+            tam = Node(i, par=O)
+            #B6: Nếu đinh con chưa trong Open và Closed thì đưa vào Open
+            if tam.name not in [x.name for x in Open] and tam.name not in [x.name for x in Closed]:
+                Open.append(tam)
 
-def getPath(node, distance):
-    path = []
-    while node.par is not None:
-        path.append(node.name)
-        node = node.par
-        distance += 1
-    path.append(node.name)
-    path.reverse()
-    
-    print('Đường đi từ điểm đầu đến điểm cuối: ', path)
-    print('Số lượng bước đi: ', distance)
-
-best_first_search() 
-
+BestFirstSearch()
